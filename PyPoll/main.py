@@ -1,96 +1,77 @@
-# Create a Python script that analyzes the votes and calculates each of the following:
-# -->>  The total number of votes cast
-# -->>  A complete list of candidates who received votes
-# -->>  The percentage of votes each candidate won
-# -->>  The total number of votes each candidate won
-# -->>  The winner of the election based on popular vote
+    #Create a Python script that analyzes the votes and calculates each of the following:
+    #The total number of votes cast
+    #A complete list of candidates who received votes
+    #The percentage of votes each candidate won
+    #The total number of votes each candidate won
+    #The winner of the election based on popular vote
 
-
-# Import dependencies
+    #Import dependencies
 import os
 import csv
 import collections
 from collections import Counter
 
-# Define PyPoll's variables
+    #Define variables
 voters_candidates = []
-votes_per_candidate = []
+votes_per_candidate = {}
+percent_candidate_votes = {}
+candidate_votes = {}
+total_votes = 0
+winner_count = 0
+winner = ""
 
-# Change directory to the directory of current python script
+    #Change directory to the directory of current python script
 os.chdir(os.path.dirname(__file__))
 
-# Path to collect data from the Resources folder
+    #Path to collect data from the Resources folder
 election_data_csv_path = os.path.join("Resources", "election_data.csv")
 
-# Open and read csv
+    #Open the CSV
 with open(election_data_csv_path, newline="") as csvfile:
+        csv_reader = csv.reader(csvfile, delimiter=',')
+        csv_header = next(csvfile)
 
-    csv_reader = csv.reader(csvfile, delimiter=",")
+     # Loop through looking for candidates
+        for row in csv_reader:
+            total_votes = total_votes + 1
+        
+        #list of candidates who received votes 
+if row[2] in candidate_votes:
+            candidate_votes[row[2]] += 1
+else:
+            candidate_votes[row[2]] = 1
 
-    # Read the header row first
-    csv_header = next(csvfile)
+    #percentage of votes each candidate won
+for key, value in candidate_votes.items():
+            percent_candidate_votes[key] =round((value/total_votes)* 100 , 3)
 
-    #print(f"Header: {csv_header}")
-    # This prints -->> Header: Voter ID,Country,Candidate
-    # Read through each row of data after the header
-    for row in csv_reader:
 
-        voters_candidates.append(row[2])
-
-    # Sort the list by default ascending order
-    sorted_list = sorted(voters_candidates)
-
-    #sorted_list = sorted(voters_candidates, reverse=True) 
-    #sorted_list.sort(reverse=True) 
-
-    #for key, group in groupby(sorted_list):
-    
-    # Arrange the sorted list by most common outcomes
-    arrange_list = sorted_list
-
-    #count votes per candidate in most common outcome order and append to a list
-    count_candidate = Counter (arrange_list) 
-    votes_per_candidate.append(count_candidate.most_common())
-
-    # calculate the percentage of votes per candicate in 3 digital points
-    for item in votes_per_candidate:
-       
-        first = format((item[0][1])*100/(sum(count_candidate.values())),'.3f')
-        second = format((item[1][1])*100/(sum(count_candidate.values())),'.3f')
-        third = format((item[2][1])*100/(sum(count_candidate.values())),'.3f')
-        fourth = format((item[3][1])*100/(sum(count_candidate.values())),'.3f')
+if percent_candidate_votes[key] > winner_count:
+                winner_count = candidate_votes[key]
+                winner = key
+                
           
-    #print(c.most_common())
-    #print(c.values())
-    #print(c.keys())
-    #print(sum(c.values()))
     
-# -->>  Print the analysis to the terminal
-print("Election Results")
-print("-------------------------")
-print(f"Total Votes:  {sum(count_candidate.values())}")
-print("-------------------------")
-print(f"{votes_per_candidate[0][0][0]}: {first}% ({votes_per_candidate[0][0][1]})")
-print(f"{votes_per_candidate[0][1][0]}: {second}% ({votes_per_candidate[0][1][1]})")
-print(f"{votes_per_candidate[0][2][0]}: {third}% ({votes_per_candidate[0][2][1]})")
-print(f"{votes_per_candidate[0][3][0]}: {fourth}% ({votes_per_candidate[0][3][1]})")
-print("-------------------------")
-print(f"Winner:  {votes_per_candidate[0][0][0]}")
-print("-------------------------")
+#print the result on terminal    
+print(f"Election Results")
+print(f"-------------------------")
+print(f"Total Votes: {total_votes}")
+print(f"-------------------------")
+for key, value in candidate_votes.items():
+    print(key,':' , str(percent_candidate_votes[key]),'%','  ','(',candidate_votes[key],')')
+print(f"-------------------------")
+print(f"Winner: {winner}")
+print(f"-------------------------")
 
-
-# -->>  Export a text file with the results
+#Export a text file with the results
 election_file = os.path.join("Output", "election_data.txt")
 with open(election_file, "w") as outfile:
-
-    outfile.write("Election Results\n")
+    outfile.write(f"Election Results\n")
+    outfile.write(f"-------------------------\n")
+    outfile.write(f"Total Votes: {total_votes}\n")
     outfile.write("-------------------------\n")
-    outfile.write(f"Total Votes:  {sum(count_candidate.values())}\n")
-    outfile.write("-------------------------\n")
-    outfile.write(f"{votes_per_candidate[0][0][0]}: {first}% ({votes_per_candidate[0][0][1]})\n")
-    outfile.write(f"{votes_per_candidate[0][1][0]}: {second}% ({votes_per_candidate[0][1][1]})\n")
-    outfile.write(f"{votes_per_candidate[0][2][0]}: {third}% ({votes_per_candidate[0][2][1]})\n")
-    outfile.write(f"{votes_per_candidate[0][3][0]}: {fourth}% ({votes_per_candidate[0][3][1]})\n")
-    outfile.write("-------------------------\n")
-    outfile.write(f"Winner:  {votes_per_candidate[0][0][0]}\n")
-    outfile.write("-------------------------\n")    
+    for key, value in candidate_votes.items():
+        outfile.write(f"{key}: {str(percent_candidate_votes[key])}%   ({candidate_votes[key]})\n")
+    outfile.write(f"-------------------------\n")
+    outfile.write(f"Winner: {winner}\n")
+    outfile.write(f"-------------------------\n")

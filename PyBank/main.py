@@ -22,14 +22,14 @@ profit_loss_change = 0
 # Change directory to the directory of current python script
 os.chdir(os.path.dirname(__file__))
 
-#Path to resources folder
+#Path to Resources Folder
 budget_data_csv_path = os.path.join("Resources", "budget_data.csv")
 
 # Open and read csv
 with open(budget_data_csv_path, newline="") as csvfile:
     csv_reader = csv.reader(csvfile, delimiter=",")
 
-# Read the header row first (skip this step if there is now header)
+# Read the header row first
     csv_header = next(csvfile)
 
  # Read each row of data after the header
@@ -77,7 +77,7 @@ with open(budget_data_csv_path, newline="") as csvfile:
     best_month = months[highest_month_index]
     worst_month = months[lowest_month_index]
 
-# -->>  Print the analysis to the terminal
+#Print the analysis
 print("Financial Analysis")
 print("----------------------------")
 print(f"Total Months:  {total_months}")
@@ -87,7 +87,7 @@ print(f"Greatest Increase in Profits:  {best_month} (${highest_change})")
 print(f"Greatest Decrease in Losses:  {worst_month} (${lowest_change})")
 
 
-# -->>  Export a text file with the results
+#Export a text file with the results to the Output folder
 budget_file = os.path.join("Output", "budget_data.txt")
 with open(budget_file, "w") as outfile:
 
